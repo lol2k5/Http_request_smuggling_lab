@@ -1,0 +1,28 @@
+services:
+  flask-backend:
+    image: python:3.10-slim
+    container_name: flask-backend
+    ports:
+      - "9002:5000"
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: sh -c "pip install --no-cache-dir flask && python app.py"
+    networks:
+      - lab
+
+  nginx-vulnerable:
+    image: nginx:1.17.6-alpine
+    container_name: nginx-vulnerable
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - lab
+    depends_on:
+      - flask-backend
+
+networks:
+  lab:
+    driver: bridge

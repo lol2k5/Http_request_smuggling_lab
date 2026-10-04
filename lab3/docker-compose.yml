@@ -1,0 +1,32 @@
+services:
+  defense-backend:
+    image: python:3.10-slim
+    container_name: defense-backend
+    ports:
+      - "9004:5000"
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "pip install --no-cache-dir flask granian &&
+             granian --interface wsgi --host 0.0.0.0 --port 5000 --http 2 app:app"
+    networks:
+      - defense-net
+
+  defense-nginx:
+    image: nginx:1.17.6-alpine
+    container_name: defense-nginx
+    ports:
+      - "9003:9003"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./server.crt:/etc/nginx/server.crt
+      - ./server.key:/etc/nginx/server.key
+    networks:
+      - defense-net
+    depends_on:
+      - defense-backend
+
+networks:
+  defense-net:
+    driver: bridge

@@ -1,0 +1,23 @@
+version: '3'
+services:
+  haproxy:
+    image: labhaproxy2
+    build:
+      context: .
+      dockerfile: haproxy.dockerfile
+    expose:
+      - 443
+    ports:
+      - "9003:443"
+    depends_on:
+      - fastapi
+
+  fastapi:
+    image: labfastapi
+    build:
+      context: .
+      dockerfile: fastapi.dockerfile
+    expose:
+      - 6767
+    ports:
+      - "9004:6767"
